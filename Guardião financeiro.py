@@ -68,6 +68,43 @@ hr { border: none; border-top: 1px solid #E0E0EE !important; margin: 18px 0 !imp
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
+# PERSISTÊNCIA LOCAL (JSON)
+# ─────────────────────────────────────────────
+CHAVES_SALVAR = [
+    "nome_user", "renda_total", "outras_rendas", "gastos", "metas",
+    "contas_fixas", "dividas", "historico_chat", "categorias_gastos",
+    "reserva_emergencia", "patrimonio_itens", "config_meta_reserva",
+    "taxa_invest_anual",
+]
+
+# ── CACHE — persiste enquanto servidor não reiniciar ──────────
+@st.cache_resource
+def get_cache_oraculo():
+    return {"perfis": {}}   # {nome_user: dados}
+
+_cache = get_cache_oraculo()
+
+def gerar_json_sessao() -> str:
+    dados = {k: st.session_state.get(k) for k in CHAVES_SALVAR}
+    dados["salvo_em"] = str(datetime.now())
+    return json.dumps(dados, ensure_ascii=False, indent=2, default=str)
+
+def carregar_json_sessao(dados: dict):
+    for k in CHAVES_SALVAR:
+        if k in dados:
+            st.session_state[k] = dados[k]
+
+def salvar_perfil_cache(nome: str, dados: dict):
+    """Salva no cache enquanto servidor estiver vivo."""
+    _cache["perfis"][nome] = dados.copy()
+
+def carregar_perfil_cache(nome: str) -> dict | None:
+    return _cache["perfis"].get(nome)
+
+def perfis_salvos() -> list:
+    return list(_cache["perfis"].keys())
+
+# ─────────────────────────────────────────────
 # INICIALIZAÇÃO DE ESTADOS
 # ─────────────────────────────────────────────
 def init():
@@ -76,17 +113,17 @@ def init():
         "nome_user": "",
         "api_key": "",
         "renda_total": 0.0,
-        "outras_rendas": [],       # {nome, valor, recorrente}
-        "gastos": [],              # {tipo, descricao, valor, data, parcelado, parcelas}
-        "metas": [],               # {nome, categoria, valor, mensal, prazo, atual, criada}
-        "contas_fixas": [],        # {nome, valor, dia_venc, categoria, ativa}
-        "dividas": [],             # {nome, valor_total, valor_pago, juros_mensal, parcela_mensal}
+        "outras_rendas": [],
+        "gastos": [],
+        "metas": [],
+        "contas_fixas": [],
+        "dividas": [],
         "historico_chat": [],
         "categorias_gastos": ["Alimentação","Transporte","Moradia","Saúde","Lazer","Educação","Vestuário","Tecnologia","Outros"],
         "nivel_evolucao": "Nível 1: Iniciante",
         "perfil_decisao": "Não Identificado",
         "reserva_emergencia": 0.0,
-        "patrimonio_itens": [],    # {nome, valor, tipo, categoria}
+        "patrimonio_itens": [],
         "config_meta_reserva": 6,
         "taxa_invest_anual": 10.0,
     }
@@ -134,7 +171,7 @@ def contexto_financeiro():
     cats = {}
     for g in st.session_state.gastos:
         cats[g["tipo"]] = cats.get(g["tipo"], 0) + g["valor"]
-    cats_txt   = "\n".join(f"  • {c}: R${v:.2f} ({pct(v, renda)}%)" for c, v in cats.items()) or "  Nenhum"
+    cats_txt    = "\n".join(f"  • {c}: R${v:.2f} ({pct(v, renda)}%)" for c, v in cats.items()) or "  Nenhum"
     dividas_txt = "\n".join(f"  • {d['nome']}: saldo R${d['valor_total']-d['valor_pago']:.2f}, juros {d['juros_mensal']}%/mês" for d in st.session_state.dividas) or "  Nenhuma"
     metas_txt   = "\n".join(f"  • {m['nome']}: {fmt(m.get('atual',0))}/{fmt(m['valor'])}" for m in st.session_state.metas) or "  Nenhuma"
     return f"""
@@ -186,17 +223,73 @@ if not st.session_state.autenticado:
           <p style="font-size:13px; color:#888899; letter-spacing:2px; margin-top:6px;">ECONOMIZE • GERENCIE • INVISTA • CRESÇA</p>
         </div>
         """, unsafe_allow_html=True)
+
+        # ── ACESSO RESTRITO ───────────────────────────────────
+        st.markdown("""<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;
+        padding:10px 16px;margin-bottom:14px;font-size:0.88em;color:#1E40AF;line-height:1.6;">
+        🔒 <strong>ACESSO RESTRITO A ASSOCIADOS DO QUIZ MAIS PRÊMIOS</strong><br>
+        🔗 <a href="https://www.quizmaispremios.com.br" target="_blank"
+        style="color:#5B50E8;font-weight:600;text-decoration:none;">www.quizmaispremios.com.br</a>
+        </div>""", unsafe_allow_html=True)
+
+        # ── PERFIS SALVOS NO SERVIDOR ─────────────────────────
+        perfis = perfis_salvos()
+        if perfis:
+            st.markdown("#### 🔮 Seus Oráculos salvos")
+            st.caption("Clique para acessar seus dados direto — sem precisar fazer upload.")
+            for nome_p in perfis:
+                dados_p = carregar_perfil_cache(nome_p)
+                renda_p = dados_p.get("renda_total", 0) if dados_p else 0
+                gastos_p = len(dados_p.get("gastos", [])) if dados_p else 0
+                if st.button(f"🔮 {nome_p}  —  Renda {fmt(renda_p)} · {gastos_p} gastos registrados", key=f"perfil_{nome_p}", use_container_width=True):
+                    chave_rapida = st.session_state.get("api_key", "")
+                    if not chave_rapida:
+                        st.warning("Cole sua chave API abaixo antes de entrar.")
+                    else:
+                        st.session_state.nome_user   = nome_p
+                        st.session_state.autenticado = True
+                        carregar_json_sessao(dados_p)
+                        st.rerun()
+            st.markdown("<hr>", unsafe_allow_html=True)
+
         with st.form("login"):
             nome  = st.text_input("👤 Seu nome")
-            chave = st.text_input("🔑 Chave Groq API", type="password", help="Grátis em console.groq.com")
+            chave = st.text_input("🔑 Chave Groq API", type="password")
+
+            # ── UPLOADER SE DADOS SUMIRAM ─────────────────────
+            if not perfis:
+                st.markdown("""<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;
+                padding:10px 14px;font-size:0.85em;color:#92400E;line-height:1.6;margin-top:8px;">
+                📥 <strong>Seus dados sumiram?</strong> Isso acontece quando o servidor reinicia.<br>
+                Selecione abaixo o arquivo <strong>.json</strong> que você salvou antes — tudo volta como era.
+                </div>""", unsafe_allow_html=True)
+                arq_login = st.file_uploader("Carregar meus dados salvos (.json):", type=["json"], key="upload_login")
+            else:
+                arq_login = None
+
+            dados_login = None
+            if arq_login is not None:
+                try:
+                    dados_login = json.load(arq_login)
+                    nome_imp = dados_login.get("nome_user", "")
+                    st.success(f"✅ Dados de **{nome_imp}** reconhecidos! Clique em Entrar.")
+                except Exception:
+                    st.error("Arquivo inválido.")
+                    dados_login = None
+
             if st.form_submit_button("🚀 ENTRAR NO SISTEMA"):
                 if nome and chave:
                     st.session_state.nome_user   = nome
                     st.session_state.api_key     = chave
                     st.session_state.autenticado = True
+                    if dados_login:
+                        carregar_json_sessao(dados_login)
                     st.rerun()
                 else:
                     st.error("Preencha nome e chave API.")
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("🔑 Não tem chave Groq? Crie grátis em <a href='https://console.groq.com/keys' target='_blank' style='color:#5B50E8;font-weight:600;'>console.groq.com/keys</a>", unsafe_allow_html=True)
     st.stop()
 
 # ─────────────────────────────────────────────
@@ -217,6 +310,34 @@ with c3:
         st.session_state.autenticado = False
         st.rerun()
 
+# ── SALVAR NO CACHE AUTOMATICAMENTE ──────────────────────────
+nome_arquivo = st.session_state.nome_user.lower().replace(" ", "_") or "meus_dados"
+json_sessao  = gerar_json_sessao()
+dados_atuais = {k: st.session_state.get(k) for k in CHAVES_SALVAR}
+salvar_perfil_cache(st.session_state.nome_user, dados_atuais)
+
+# ── BARRA DE SALVAR NO COMPUTADOR ────────────────────────────
+tem_dados_logado = (
+    len(st.session_state.gastos) > 0 or
+    len(st.session_state.contas_fixas) > 0 or
+    st.session_state.renda_total > 0
+)
+col_av, col_btn = st.columns([4, 2])
+with col_av:
+    if tem_dados_logado:
+        st.markdown("""<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;
+        padding:10px 14px;font-size:0.84em;color:#92400E;line-height:1.6;">
+        💾 <strong>Antes de sair, salve seus dados no computador</strong> — se o servidor reiniciar, faça o upload do arquivo para recuperar tudo.
+        </div>""", unsafe_allow_html=True)
+with col_btn:
+    st.download_button(
+        label="💾 SALVAR MEUS DADOS (.json)",
+        data=json_sessao,
+        file_name=f"oraculo_{nome_arquivo}.json",
+        mime="application/json",
+        use_container_width=True,
+    )
+
 st.markdown("<hr>", unsafe_allow_html=True)
 
 # TABS
@@ -234,6 +355,33 @@ tabs = st.tabs([
 # 1. DASHBOARD
 # ══════════════════════════════════════════════
 with tab_dash:
+
+    # ── AVISO SE DADOS SUMIRAM ────────────────────────────────
+    tem_dados_dash = (
+        len(st.session_state.gastos) > 0 or
+        len(st.session_state.contas_fixas) > 0 or
+        st.session_state.renda_total > 0
+    )
+    if not tem_dados_dash:
+        st.markdown("""<div style="background:#FFFBEB;border:2px solid #F59E0B;border-radius:12px;
+        padding:12px 18px;margin-bottom:4px;color:#92400E;font-size:0.9em;font-weight:600;">
+        ⚠️ Seus dados não estão mais no servidor.
+        </div>""", unsafe_allow_html=True)
+        arq_dash = st.file_uploader(
+            "Carregar meus dados salvos (.json):",
+            type=["json"],
+            key="upload_dash"
+        )
+        if arq_dash is not None:
+            try:
+                dados_dash = json.load(arq_dash)
+                carregar_json_sessao(dados_dash)
+                st.success("✅ Dados recuperados! Sua sessão está completa.")
+                st.rerun()
+            except Exception:
+                st.error("Arquivo inválido. Use o .json gerado pelo Oráculo Financeiro.")
+        st.markdown("<br>", unsafe_allow_html=True)
+
     # Alerta de situação
     if renda == 0:
         st.markdown('<div class="alert-info">ℹ️ Comece cadastrando sua renda na aba <b>Renda</b>.</div>', unsafe_allow_html=True)
@@ -260,7 +408,6 @@ with tab_dash:
     col_a, col_b = st.columns(2)
 
     with col_a:
-        # Distribuição da renda em barras
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("<b style='color:#1A1A2E;'>📊 Distribuição da Renda</b>", unsafe_allow_html=True)
         if renda > 0:
@@ -281,7 +428,6 @@ with tab_dash:
             st.markdown("<p>Cadastre sua renda para ver a distribuição.</p>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # Regra 50/30/20
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("<b style='color:#1A1A2E;'>📐 Regra 50/30/20</b>", unsafe_allow_html=True)
         if renda > 0:
@@ -307,7 +453,6 @@ with tab_dash:
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col_b:
-        # Reserva de emergência
         meta_res_d = gf * st.session_state.config_meta_reserva
         pct_res_d  = pct(st.session_state.reserva_emergencia, meta_res_d) if meta_res_d > 0 else 0
         st.markdown(f"""<div class="card-green">
@@ -317,7 +462,6 @@ with tab_dash:
         <span style='font-size:12px;color:#888899;'>{'✅ Completa!' if pct_res_d >= 100 else f'Faltam {fmt(max(0, meta_res_d - st.session_state.reserva_emergencia))}'}</span>
         </div>""", unsafe_allow_html=True)
 
-        # Metas rápidas
         if st.session_state.metas:
             st.markdown('<div class="card">', unsafe_allow_html=True)
             st.markdown("<b style='color:#1A1A2E;'>🎯 Metas em Andamento</b>", unsafe_allow_html=True)
@@ -334,7 +478,6 @@ with tab_dash:
                 </div>""", unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
 
-        # Dívidas resumo
         if st.session_state.dividas:
             total_div_d = sum(d["valor_total"] - d["valor_pago"] for d in st.session_state.dividas)
             st.markdown(f"""<div class="card-red">
@@ -344,7 +487,6 @@ with tab_dash:
             <span style='font-size:12px;color:#888899;'>{len(st.session_state.dividas)} dívida(s) ativa(s)</span>
             </div>""", unsafe_allow_html=True)
 
-        # Diagnóstico automático
         st.markdown('<div class="card-purple">', unsafe_allow_html=True)
         st.markdown("<b style='color:#1A1A2E;'>💡 Diagnóstico Automático</b>", unsafe_allow_html=True)
         dicas = []
@@ -382,7 +524,6 @@ with tab_ia:
             st.success(f"Perfil mapeado: {d3}, {d4}")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # Simulador de investimento
         st.markdown('<div class="card-gold">', unsafe_allow_html=True)
         st.markdown("<b style='color:#1A1A2E;'>📈 Simulador de Investimento</b>", unsafe_allow_html=True)
         v_inv   = st.number_input("Aporte mensal (R$):", value=500.0, min_value=0.0, step=50.0)
@@ -411,7 +552,6 @@ with tab_ia:
         """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # Perguntas rápidas
         st.markdown("<b style='color:#1A1A2E;font-size:13px;'>⚡ Perguntas Rápidas</b>", unsafe_allow_html=True)
         for q in [
             "Analise minha saúde financeira completa",
@@ -541,7 +681,6 @@ with tab_gastos:
                     idx = st.session_state.gastos.index(g)
                     if st.button("✕", key=f"del_g_{i}"):
                         st.session_state.gastos.pop(idx); st.rerun()
-            # Totais por categoria
             if gastos_f:
                 st.markdown("<hr>", unsafe_allow_html=True)
                 st.markdown("<b style='color:#1A1A2E;font-size:13px;'>Por categoria:</b>", unsafe_allow_html=True)
@@ -648,7 +787,6 @@ with tab_fixas:
                 with col_fd:
                     if st.button("✕", key=f"del_f_{i}"):
                         st.session_state.contas_fixas.pop(idx); st.rerun()
-            # Totais por categoria
             st.markdown("<hr>", unsafe_allow_html=True)
             cats_f = {}
             for f in st.session_state.contas_fixas:
@@ -667,7 +805,7 @@ with tab_fixas:
 # 7. DÍVIDAS
 # ══════════════════════════════════════════════
 with tab_div:
-    st.markdown('<div class="alert-info">💡 <b>Avalanche:</b> quite a dívida de maior juros primeiro (economiza mais dinheiro). <b>Bola de Neve:</b> quite a menor primeiro (mais motivação).</div>', unsafe_allow_html=True)
+    st.markdown('<div class="alert-info">💡 <b>Avalanche:</b> quite a dívida de maior juros primeiro. <b>Bola de Neve:</b> quite a menor primeiro.</div>', unsafe_allow_html=True)
     col_dv1, col_dv2 = st.columns(2)
     with col_dv1:
         st.markdown('<div class="card-red">', unsafe_allow_html=True)
@@ -693,7 +831,6 @@ with tab_div:
         if not st.session_state.dividas:
             st.markdown('<div class="alert-success">✅ Nenhuma dívida cadastrada. Parabéns!</div>', unsafe_allow_html=True)
         else:
-            # Ordenar por juros (avalanche)
             dividas_ord = sorted(st.session_state.dividas, key=lambda x: -x["juros_mensal"])
             for i, d in enumerate(dividas_ord):
                 saldo_d = d["valor_total"] - d["valor_pago"]
@@ -721,7 +858,6 @@ with tab_div:
                     if st.button("✕", key=f"del_d_{i}"):
                         st.session_state.dividas.pop(idx); st.rerun()
 
-            # Previsão de quitação
             st.markdown("<hr>", unsafe_allow_html=True)
             st.markdown("<b style='color:#1A1A2E;font-size:13px;'>⏱️ Previsão de Quitação</b>", unsafe_allow_html=True)
             for d in dividas_ord:
@@ -816,7 +952,6 @@ with tab_inv:
         cap_ini_inv = st.number_input("Capital inicial (R$)", min_value=0.0, value=0.0, step=500.0)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # Projeções
     taxa_m_inv = (1 + taxa_a_inv/100)**(1/12) - 1
     st.markdown("<br><b style='color:#1A1A2E;'>🗓️ Projeções de Crescimento</b>", unsafe_allow_html=True)
     prazos_inv = [1, 2, 5, 10, 20, 30]
@@ -966,7 +1101,6 @@ with tab_rel:
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col_rl2:
-        # Fluxo de caixa
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("<b style='color:#1A1A2E;'>💹 Fluxo de Caixa</b>", unsafe_allow_html=True)
         if renda > 0:
@@ -986,7 +1120,6 @@ with tab_rel:
                 </div>{barra(pct_f, cor_f)}""", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # Gráfico de gastos por categoria (nativo Streamlit)
         if st.session_state.gastos:
             st.markdown('<div class="card">', unsafe_allow_html=True)
             st.markdown("<b style='color:#1A1A2E;'>💸 Gastos por Categoria</b>", unsafe_allow_html=True)
@@ -994,25 +1127,33 @@ with tab_rel:
             st.bar_chart(df_rel)
             st.markdown("</div>", unsafe_allow_html=True)
 
-    # Exportar dados
     st.markdown("<hr>", unsafe_allow_html=True)
-    if st.button("📥 Exportar meus dados (JSON)"):
+    st.markdown("<b style='color:#1A1A2E;'>💾 Exportar Dados</b>", unsafe_allow_html=True)
+    col_exp1, col_exp2 = st.columns(2)
+    with col_exp1:
+        st.download_button(
+            "💾 SALVAR MEUS DADOS (.json)",
+            data=gerar_json_sessao(),
+            file_name=f"oraculo_{st.session_state.nome_user.lower().replace(' ','_')}_{date.today()}.json",
+            mime="application/json",
+            use_container_width=True,
+        )
+    with col_exp2:
         dados_exp = {
-            "usuario":     st.session_state.nome_user,
+            "usuario": st.session_state.nome_user,
             "exportado_em": str(datetime.now()),
-            "renda":        renda,
-            "gastos":       st.session_state.gastos,
+            "renda": renda, "gastos": st.session_state.gastos,
             "contas_fixas": st.session_state.contas_fixas,
-            "metas":        st.session_state.metas,
-            "dividas":      st.session_state.dividas,
-            "reserva":      st.session_state.reserva_emergencia,
-            "patrimonio":   st.session_state.patrimonio_itens,
+            "metas": st.session_state.metas, "dividas": st.session_state.dividas,
+            "reserva": st.session_state.reserva_emergencia,
+            "patrimonio": st.session_state.patrimonio_itens,
         }
         st.download_button(
-            "💾 Baixar JSON",
+            "📥 Exportar relatório (.json)",
             data=json.dumps(dados_exp, indent=2, ensure_ascii=False, default=str),
-            file_name=f"financas_{st.session_state.nome_user}_{date.today()}.json",
-            mime="application/json"
+            file_name=f"relatorio_{st.session_state.nome_user}_{date.today()}.json",
+            mime="application/json",
+            use_container_width=True,
         )
 
 # ══════════════════════════════════════════════
@@ -1034,16 +1175,8 @@ with tab_cfg:
         st.markdown("""
         <p style="font-size:13px;line-height:1.7;">
         O <b style="color:#1A1A2E;">Oráculo Financeiro</b> é um sistema pessoal de organização e educação financeira.
-        Todos os dados ficam na sua sessão local e não são armazenados em servidor.
         </p>
         <p style="font-size:12px;color:#888899;">⚠️ Este sistema não é um serviço regulamentado. As análises são educativas e não substituem um consultor financeiro certificado (CFP/CEA).</p>
-        <hr>
-        <p style="font-size:12px;color:#888899;">
-        <b>Instalação:</b><br>
-        <code>pip install streamlit groq pandas</code><br><br>
-        <b>Execução:</b><br>
-        <code>streamlit run oraculo_financeiro.py</code>
-        </p>
         """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -1056,8 +1189,8 @@ with tab_cfg:
             if st.button("🗑️ APAGAR TODOS OS DADOS"):
                 for k in ["gastos","metas","contas_fixas","outras_rendas","patrimonio_itens","historico_chat","dividas"]:
                     st.session_state[k] = []
-                st.session_state.renda_total          = 0.0
-                st.session_state.reserva_emergencia   = 0.0
+                st.session_state.renda_total        = 0.0
+                st.session_state.reserva_emergencia = 0.0
                 st.success("Dados apagados com sucesso.")
                 st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
