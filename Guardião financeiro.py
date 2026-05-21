@@ -8,7 +8,7 @@ import math
 # ─────────────────────────────────────────────
 # CONFIG PÁGINA
 # ─────────────────────────────────────────────
-st.set_page_config(page_title="Oráculo Financeiro", page_icon="🔮", layout="wide")
+st.set_page_config(page_title="Oráculo Financeiro", page_icon="💰", layout="wide")
 
 # ─────────────────────────────────────────────
 # DESIGN
@@ -218,7 +218,7 @@ if not st.session_state.autenticado:
     with col:
         st.markdown("""
         <div class="card" style="text-align:center; padding:40px;">
-          <div style="font-size:56px; margin-bottom:12px;">🔮</div>
+          <div style="font-size:56px; margin-bottom:12px;">💰</div>
           <h1 style="font-size:28px; margin:0; color:#1A1A2E;">Oráculo Financeiro</h1>
           <p style="font-size:13px; color:#888899; letter-spacing:2px; margin-top:6px;">ECONOMIZE • GERENCIE • INVISTA • CRESÇA</p>
         </div>
@@ -235,13 +235,13 @@ if not st.session_state.autenticado:
         # ── PERFIS SALVOS NO SERVIDOR ─────────────────────────
         perfis = perfis_salvos()
         if perfis:
-            st.markdown("#### 🔮 Seus Oráculos salvos")
+            st.markdown("#### 💰 Seus Oráculos salvos")
             st.caption("Clique para acessar seus dados direto — sem precisar fazer upload.")
             for nome_p in perfis:
                 dados_p = carregar_perfil_cache(nome_p)
                 renda_p = dados_p.get("renda_total", 0) if dados_p else 0
                 gastos_p = len(dados_p.get("gastos", [])) if dados_p else 0
-                if st.button(f"🔮 {nome_p}  —  Renda {fmt(renda_p)} · {gastos_p} gastos registrados", key=f"perfil_{nome_p}", use_container_width=True):
+                if st.button(f"💰 {nome_p}  —  Renda {fmt(renda_p)} · {gastos_p} gastos registrados", key=f"perfil_{nome_p}", use_container_width=True):
                     chave_rapida = st.session_state.get("api_key", "")
                     if not chave_rapida:
                         st.warning("Cole sua chave API abaixo antes de entrar.")
@@ -300,7 +300,7 @@ renda, gv, gf, gm, div_m, saldo = get_totais()
 # HEADER
 c1, c2, c3 = st.columns([3, 2, 1])
 with c1:
-    st.markdown(f"<h1 style='margin:0;font-size:24px;color:#1A1A2E;'>🔮 Oráculo de {st.session_state.nome_user}</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h1 style='margin:0;font-size:24px;color:#1A1A2E;'>💰 Oráculo de {st.session_state.nome_user}</h1>", unsafe_allow_html=True)
 with c2:
     nivel = st.session_state.nivel_evolucao
     cls   = "badge-green" if ("5" in nivel or "4" in nivel) else ("badge-gold" if ("3" in nivel or "2" in nivel) else "badge-red")
@@ -403,6 +403,27 @@ with tab_dash:
     metrica(c4, "🚀 Metas/Mês",         gm,               "#A78BFA", f"{pct(gm,renda)}% da renda")
     cor_s = "#6EE7B7" if saldo >= 0 else "#FCA5A5"
     metrica(c5, "⚖️ Estabilidade",     saldo,            cor_s,     f"{pct(saldo,renda)}% livre")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ── GUIA DAS ABAS ────────────────────────────────────────
+    st.markdown("### 🗺️ O que cada aba faz")
+    guia = {
+        "🏠 Dashboard":        "Visão geral da sua saúde financeira com alertas e diagnóstico automático",
+        "🧠 Consultor IA":     "Mentor financeiro que conhece seus números e responde perguntas diretas",
+        "💵 Renda":            "Cadastre seu salário e outras fontes de renda",
+        "💸 Gastos":           "Registre e categorize seus gastos variáveis",
+        "🎯 Metas":            "Crie e acompanhe metas de economia e investimento",
+        "🛡️ Fixas":            "Gerencie suas contas fixas mensais",
+        "💳 Dívidas":          "Controle dívidas com estratégia avalanche ou bola de neve",
+        "🏦 Reserva":          "Acompanhe sua reserva de emergência",
+        "📈 Investimentos":    "Simulações e estratégias de investimento por perfil",
+        "⚖️ Patrimônio":       "Balanço entre ativos e passivos — seu patrimônio líquido",
+        "📊 Relatório":        "Relatório completo com fluxo de caixa e exportação",
+        "⚙️ Config":           "Ajuste metas e configurações do sistema",
+    }
+    for aba, desc in guia.items():
+        st.markdown(f"**{aba}** — {desc}")
 
     st.markdown("<br>", unsafe_allow_html=True)
     col_a, col_b = st.columns(2)
@@ -570,12 +591,12 @@ with tab_ia:
     with col_c:
         st.markdown("<b style='color:#1A1A2E;font-size:16px;'>💼 Mentor de Decisão</b>", unsafe_allow_html=True)
         if not st.session_state.historico_chat:
-            st.markdown('<div class="alert-info" style="text-align:center;">🔮 Faça sua primeira pergunta. O Oráculo conhece seus números e vai ser direto ao ponto.</div>', unsafe_allow_html=True)
+            st.markdown('<div class="alert-info" style="text-align:center;">💰 Faça sua primeira pergunta. O Oráculo conhece seus números e vai ser direto ao ponto.</div>', unsafe_allow_html=True)
         for msg in st.session_state.historico_chat:
             if msg["role"] == "user":
                 st.markdown(f'<div class="chat-user"><span style="font-size:11px;color:#888899;">👤 {st.session_state.nome_user}</span><br><span style="color:#1A1A2E;">{msg["content"]}</span></div>', unsafe_allow_html=True)
             else:
-                st.markdown(f'<div class="chat-ai"><span style="font-size:11px;color:#5B50E8;">🔮 Oráculo</span><br><span style="color:#333355;">{msg["content"]}</span></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="chat-ai"><span style="font-size:11px;color:#5B50E8;">💰 Oráculo</span><br><span style="color:#333355;">{msg["content"]}</span></div>', unsafe_allow_html=True)
 
         if p := st.chat_input("Qual é sua dúvida ou decisão financeira?"):
             with st.spinner("O Oráculo está analisando..."):
