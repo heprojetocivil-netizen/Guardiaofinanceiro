@@ -227,9 +227,9 @@ if not st.session_state.autenticado:
         # ── ACESSO RESTRITO ───────────────────────────────────
         st.markdown("""<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;
         padding:10px 16px;margin-bottom:14px;font-size:0.88em;color:#1E40AF;line-height:1.6;">
-        🔒 <strong>ACESSO RESTRITO A ASSOCIADOS DO QUIZ MAIS PRÊMIOS</strong><br>
-        🔗 <a href="https://www.quizmaispremios.com.br" target="_blank"
-        style="color:#5B50E8;font-weight:600;text-decoration:none;">www.quizmaispremios.com.br</a>
+        🔒 <strong>ACESSO RESTRITO A ASSOCIADOS DO QUIZ COM PRÊMIOS</strong><br>
+        🔗 <a href="https://quizcompremios.com.br/" target="_blank"
+        style="color:#5B50E8;font-weight:600;text-decoration:none;">quizcompremios.com.br</a>
         </div>""", unsafe_allow_html=True)
 
         # ── PERFIS SALVOS NO SERVIDOR ─────────────────────────
