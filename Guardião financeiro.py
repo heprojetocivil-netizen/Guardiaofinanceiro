@@ -15,56 +15,81 @@ st.set_page_config(page_title="Oráculo Financeiro", page_icon="💰", layout="w
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
-[data-testid="stSidebar"] { display: none; }
-header { visibility: hidden; }
-.stApp { background-color: #F5F6FA; color: #1A1A2E; }
-h1, h2, h3, h4 { color: #1A1A2E !important; font-family: 'Segoe UI', sans-serif; }
-p, span, label, div { color: #333355; font-family: 'Segoe UI', sans-serif; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-.card        { background: #FFFFFF; border: 1px solid #E0E0EE; border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-.card-green  { background: #F0FDF8; border: 1px solid #A7F3D0; border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; }
-.card-purple { background: #F5F3FF; border: 1px solid #C4B5FD; border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; }
-.card-gold   { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; }
-.card-red    { background: #FFF5F5; border: 1px solid #FECACA; border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; }
-.card-blue   { background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; }
+    .stApp { background-color:#F6FBF4; font-family:'Inter',sans-serif; }
+    [data-testid="stSidebar"] { display:none; }
 
-.metric-box   { background: #FFFFFF; border: 1px solid #E0E0EE; border-radius: 12px; padding: 14px 18px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-.metric-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: #888899; margin-bottom: 6px; }
-.metric-value { font-size: 22px; font-weight: 700; color: #1A1A2E; }
-.metric-sub   { font-size: 11px; color: #888899; margin-top: 3px; }
+    .stTextInput>div>div>input, .stTextArea>div>textarea,
+    .stSelectbox>div>div>div, .stNumberInput>div>div>input {
+        background-color:#FFFFFF !important; color:#1A1A2E !important;
+        border:1px solid #CED4DA !important; font-family:'Inter',sans-serif !important;
+    }
 
-.badge-purple { background: #EDE9FE; color: #6D28D9; border: 1px solid #C4B5FD; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-.badge-green  { background: #D1FAE5; color: #065F46; border: 1px solid #6EE7B7; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-.badge-gold   { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-.badge-red    { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-.badge-teal   { background: #E0F2FE; color: #0369A1; border: 1px solid #BAE6FD; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .stButton>button {
+        width:100%; border-radius:10px; height:3.2em;
+        background:linear-gradient(135deg,#16A34A,#15803D) !important; color:white !important;
+        font-weight:600; border:none; box-shadow:2px 2px 8px rgba(0,0,0,0.1);
+        font-family:'Inter',sans-serif !important; transition:all 0.2s ease;
+    }
+    .stButton>button:hover { background:linear-gradient(135deg,#15803D,#166534) !important; transform:translateY(-1px); }
+    .stApp .stButton>button, .stApp .stButton>button p,
+    .stApp .stButton>button span, .stApp .stButton>button div { color:white !important; }
 
-.list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #F8F8FC; border-radius: 9px; margin-bottom: 7px; border: 1px solid #E8E8F0; }
-.prog-wrap { background: #E0E0EE; border-radius: 999px; height: 7px; overflow: hidden; margin: 6px 0; }
-.prog-fill { height: 100%; border-radius: 999px; }
+    .stApp h1, .stApp h2, .stApp h3 { color:#14532D !important; font-family:'Inter',sans-serif !important; font-weight:700 !important; }
 
-.alert-danger  { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 10px; padding: 12px 16px; color: #991B1B !important; margin-bottom: 10px; }
-.alert-success { background: #F0FDF4; border: 1px solid #A7F3D0; border-radius: 10px; padding: 12px 16px; color: #065F46 !important; margin-bottom: 10px; }
-.alert-warn    { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 10px; padding: 12px 16px; color: #92400E !important; margin-bottom: 10px; }
-.alert-info    { background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 10px; padding: 12px 16px; color: #1E40AF !important; margin-bottom: 10px; }
+    .card { background:linear-gradient(135deg,#F0FDF4,#DCFCE7); padding:20px; border-radius:14px; border:1px solid #86EFAC; margin-bottom:14px; white-space:normal; word-wrap:break-word; }
+    .stApp .card, .stApp .card p, .stApp .card span, .stApp .card div, .stApp .card strong, .stApp .card em { color:#14532D !important; }
 
-.chat-user { background: #F0F0FA; border: 1px solid #E0E0EE; border-radius: 12px 12px 4px 12px; padding: 12px 16px; margin: 8px 0; }
-.chat-ai   { background: #F5F3FF; border: 1px solid #C4B5FD; border-radius: 4px 12px 12px 12px; padding: 12px 16px; margin: 8px 0; }
+    .card-dark { background:linear-gradient(135deg,#DCFCE7,#D1FAE5); padding:20px; border-radius:14px; border:1px solid #6EE7B7; margin-bottom:14px; white-space:normal; word-wrap:break-word; }
+    .stApp .card-dark, .stApp .card-dark p, .stApp .card-dark span, .stApp .card-dark div, .stApp .card-dark strong { color:#14532D !important; }
 
-.stButton > button { background: #5B50E8 !important; color: #fff !important; font-weight: 600 !important; border: none !important; border-radius: 9px !important; width: 100%; }
-.stButton > button:hover { background: #4338CA !important; }
+    .card-green { background:linear-gradient(135deg,#DCFCE7,#BBF7D0); padding:20px; border-radius:14px; border:1px solid #4ADE80; margin-bottom:14px; white-space:normal; word-wrap:break-word; }
+    .stApp .card-green, .stApp .card-green p, .stApp .card-green span, .stApp .card-green div { color:#14532D !important; }
 
-.stTextInput > div > div > input,
-.stNumberInput > div > div > input,
-.stTextArea textarea { background: #FFFFFF !important; color: #1A1A2E !important; border: 1px solid #D0D0E0 !important; border-radius: 8px !important; }
-.stSelectbox > div > div { background: #FFFFFF !important; color: #1A1A2E !important; border: 1px solid #D0D0E0 !important; border-radius: 8px !important; }
-[data-testid="stForm"] { background: #FFFFFF; border: 1px solid #E0E0EE; border-radius: 14px; padding: 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-.stTabs [data-baseweb="tab-list"] { background: #FFFFFF; border-radius: 10px; padding: 3px; border: 1px solid #E0E0EE; gap: 3px; }
-.stTabs [data-baseweb="tab"] { background: transparent !important; color: #888899 !important; border-radius: 7px !important; }
-.stTabs [aria-selected="true"] { background: #EEEAFF !important; color: #4338CA !important; font-weight: 600 !important; }
-.stTabs [data-baseweb="tab-border"] { display: none; }
-hr { border: none; border-top: 1px solid #E0E0EE !important; margin: 18px 0 !important; }
-</style>
+    .card-blue { background:linear-gradient(135deg,#EFF6FF,#DBEAFE); padding:20px; border-radius:14px; border:1px solid #93C5FD; margin-bottom:14px; white-space:normal; word-wrap:break-word; }
+    .stApp .card-blue, .stApp .card-blue p, .stApp .card-blue span, .stApp .card-blue div { color:#1E3A8A !important; }
+
+    .card-red { background:linear-gradient(135deg,#FFF5F5,#FEE2E2); padding:20px; border-radius:14px; border:1px solid #FECACA; margin-bottom:14px; white-space:normal; word-wrap:break-word; }
+    .stApp .card-red, .stApp .card-red p, .stApp .card-red span, .stApp .card-red div { color:#7F1D1D !important; }
+
+    .card-yellow { background:linear-gradient(135deg,#FFFBEB,#FEF3C7); padding:18px; border-radius:12px; border:1px solid #FCD34D; margin-bottom:12px; white-space:normal; word-wrap:break-word; }
+    .stApp .card-yellow, .stApp .card-yellow p, .stApp .card-yellow span, .stApp .card-yellow div { color:#78350F !important; }
+
+    .stat-box { background:#FFFFFF; border-radius:12px; padding:16px; text-align:center; border:1px solid #86EFAC; }
+    .stApp .stat-box div, .stApp .stat-box span, .stApp .stat-box p { color:#14532D !important; }
+    .stApp .stat-numero, .stat-numero { font-size:2em; font-weight:700; color:#166534 !important; }
+
+    .hist-item { background:#FFFFFF; border-radius:10px; padding:12px 16px; margin-bottom:8px; border-left:4px solid #86EFAC; }
+    .stApp .hist-item, .stApp .hist-item p, .stApp .hist-item span, .stApp .hist-item div, .stApp .hist-item small { color:#14532D !important; }
+
+    .badge { background:#166534; color:white !important; padding:4px 12px; border-radius:20px; font-size:0.78em; font-weight:600; display:inline-block; margin:2px; }
+    .badge-verde { background:#059669; color:white !important; padding:4px 12px; border-radius:20px; font-size:0.78em; font-weight:600; display:inline-block; margin:2px; }
+    .badge-amarelo { background:#B45309; color:white !important; padding:4px 12px; border-radius:20px; font-size:0.78em; font-weight:600; display:inline-block; margin:2px; }
+    .badge-azul { background:#1D4ED8; color:white !important; padding:4px 12px; border-radius:20px; font-size:0.78em; font-weight:600; display:inline-block; margin:2px; }
+    .badge-roxo { background:#6D28D9; color:white !important; padding:4px 12px; border-radius:20px; font-size:0.78em; font-weight:600; display:inline-block; margin:2px; }
+
+    .divider { border:none; height:1px; background:linear-gradient(to right,transparent,#86EFAC,transparent); margin:18px 0; }
+
+    .chat-user { background:#FFFFFF; border:1px solid #86EFAC; border-radius:12px 12px 4px 12px; padding:12px 16px; margin:8px 0; }
+    .stApp .chat-user, .stApp .chat-user p, .stApp .chat-user span, .stApp .chat-user div { color:#14532D !important; }
+
+    .chat-persona { background:#F6FBF4; border:1px solid #86EFAC; border-radius:4px 12px 12px 12px; padding:12px 16px; margin:8px 0; }
+    .stApp .chat-persona, .stApp .chat-persona p, .stApp .chat-persona span, .stApp .chat-persona div { color:#14532D !important; }
+
+    .questao-box { background:#FFFFFF; border:2px solid #86EFAC; border-radius:12px; padding:18px; margin-bottom:14px; }
+    .stApp .questao-box, .stApp .questao-box p, .stApp .questao-box span, .stApp .questao-box div { color:#14532D !important; }
+
+    .avaliacao-box { background:#FFFFFF; border:2px solid #86EFAC; border-radius:14px; padding:18px; margin-bottom:12px; }
+    .stApp .avaliacao-box, .stApp .avaliacao-box p, .stApp .avaliacao-box span, .stApp .avaliacao-box div { color:#14532D !important; }
+
+    .meta-box { background:#FFFFFF; border:2px solid #86EFAC; border-radius:12px; padding:16px; text-align:center; margin:10px 0; }
+    .stApp .meta-box, .stApp .meta-box div, .stApp .meta-box span { color:#14532D !important; }
+    .stApp .meta-numero { font-size:2em; font-weight:700; color:#166534 !important; }
+
+    .chat-scroll-container { max-height:40vh; overflow-y:auto; display:flex; flex-direction:column; scroll-behavior:smooth; padding-bottom:4px; }
+    .chat-scroll-container > * { flex-shrink:0; }
+    </style>
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
@@ -204,7 +229,7 @@ Termine sempre com: "⚠️ Análise baseada nos seus dados. Consulte um profiss
         for m in historico[-10:]:
             msgs.append(m)
         msgs.append({"role": "user", "content": prompt})
-        r = client.chat.completions.create(messages=msgs, model="llama-3.3-70b-versatile", max_tokens=700, temperature=0.7)
+        r = client.chat.completions.create(messages=msgs, model="openai/gpt-oss-120b", max_tokens=700, temperature=0.7)
         return r.choices[0].message.content
     except Exception as e:
         return f"⚠️ Oráculo indisponível. Verifique sua chave API. Erro: {str(e)[:80]}"
@@ -213,14 +238,13 @@ Termine sempre com: "⚠️ Análise baseada nos seus dados. Consulte um profiss
 # TELA DE LOGIN
 # ─────────────────────────────────────────────
 if not st.session_state.autenticado:
-    st.markdown("<br><br>", unsafe_allow_html=True)
     _, col, _ = st.columns([1, 1.6, 1])
     with col:
         st.markdown("""
         <div class="card" style="text-align:center; padding:40px;">
           <div style="font-size:56px; margin-bottom:12px;">💰</div>
           <h1 style="font-size:28px; margin:0; color:#1A1A2E;">Oráculo Financeiro</h1>
-          <p style="font-size:13px; color:#888899; letter-spacing:2px; margin-top:6px;">ECONOMIZE • GERENCIE • INVISTA • CRESÇA</p>
+          <p style="font-size:13px; color:#4B5563; letter-spacing:2px; margin-top:6px;">ECONOMIZE • GERENCIE • INVISTA • CRESÇA</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -253,8 +277,8 @@ if not st.session_state.autenticado:
             st.markdown("<hr>", unsafe_allow_html=True)
 
         with st.form("login"):
-            nome  = st.text_input("👤 Seu nome")
-            chave = st.text_input("🔑 Chave Groq API", type="password")
+            nome  = st.text_input("👤 Seu nome", key="input_nome_login")
+            chave = st.text_input("🔑 Chave Groq API", type="password", key="input_chave_login")
 
             # ── UPLOADER SE DADOS SUMIRAM ─────────────────────
             if not perfis:
@@ -288,7 +312,6 @@ if not st.session_state.autenticado:
                 else:
                     st.error("Preencha nome e chave API.")
 
-        st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("🔑 Não tem chave Groq? Crie grátis em <a href='https://console.groq.com/keys' target='_blank' style='color:#5B50E8;font-weight:600;'>console.groq.com/keys</a>", unsafe_allow_html=True)
     st.stop()
 
@@ -380,7 +403,6 @@ with tab_dash:
                 st.rerun()
             except Exception:
                 st.error("Arquivo inválido. Use o .json gerado pelo Oráculo Financeiro.")
-        st.markdown("<br>", unsafe_allow_html=True)
 
     # Alerta de situação
     if renda == 0:
@@ -400,11 +422,10 @@ with tab_dash:
     metrica(c1, "💰 Renda",            renda,            "#6EE7B7", "total/mês")
     metrica(c2, "🛡️ Blindagem",        gf,               "#7DD3FC", f"{pct(gf,renda)}% da renda")
     metrica(c3, "💸 Gastos Variáveis",  gv,               "#FCD34D", f"{pct(gv,renda)}% da renda")
-    metrica(c4, "🚀 Metas/Mês",         gm,               "#A78BFA", f"{pct(gm,renda)}% da renda")
+    metrica(c4, "🚀 Metas/Mês",         gm,               "#6D28D9", f"{pct(gm,renda)}% da renda")
     cor_s = "#6EE7B7" if saldo >= 0 else "#FCA5A5"
     metrica(c5, "⚖️ Estabilidade",     saldo,            cor_s,     f"{pct(saldo,renda)}% livre")
 
-    st.markdown("<br>", unsafe_allow_html=True)
 
     # ── GUIA DAS ABAS ────────────────────────────────────────
     st.markdown("### 🗺️ O que cada aba faz")
@@ -425,7 +446,6 @@ with tab_dash:
     for aba, desc in guia.items():
         st.markdown(f"**{aba}** — {desc}")
 
-    st.markdown("<br>", unsafe_allow_html=True)
     col_a, col_b = st.columns(2)
 
     with col_a:
@@ -436,14 +456,14 @@ with tab_dash:
                 ("🛡️ Fixas",       gf,              "#38BDF8"),
                 ("💸 Variáveis",   gv,              "#FCD34D"),
                 ("💳 Dívidas",     div_m,           "#FCA5A5"),
-                ("🚀 Metas",       gm,              "#A78BFA"),
+                ("🚀 Metas",       gm,              "#6D28D9"),
                 ("✅ Livre",       max(0, saldo),   "#6EE7B7"),
             ]:
                 pct_d = pct(val_d, renda)
                 st.markdown(f"""
                 <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
                   <span style="font-size:13px;color:#555577;">{nome_d}</span>
-                  <span style="font-size:13px;color:#1A1A2E;">{fmt(val_d)} <span style="color:#888899;">({pct_d}%)</span></span>
+                  <span style="font-size:13px;color:#1A1A2E;">{fmt(val_d)} <span style="color:#4B5563;">({pct_d}%)</span></span>
                 </div>{barra(pct_d, cor_d)}""", unsafe_allow_html=True)
         else:
             st.markdown("<p>Cadastre sua renda para ver a distribuição.</p>", unsafe_allow_html=True)
@@ -480,7 +500,7 @@ with tab_dash:
         <b style='color:#1A1A2E;'>🛡️ Reserva de Emergência</b><br>
         <span style='font-size:13px;color:#555577;'>{fmt(st.session_state.reserva_emergencia)} de {fmt(meta_res_d)} ({st.session_state.config_meta_reserva} meses)</span>
         {barra(pct_res_d, "#10B981")}
-        <span style='font-size:12px;color:#888899;'>{'✅ Completa!' if pct_res_d >= 100 else f'Faltam {fmt(max(0, meta_res_d - st.session_state.reserva_emergencia))}'}</span>
+        <span style='font-size:12px;color:#4B5563;'>{'✅ Completa!' if pct_res_d >= 100 else f'Faltam {fmt(max(0, meta_res_d - st.session_state.reserva_emergencia))}'}</span>
         </div>""", unsafe_allow_html=True)
 
         if st.session_state.metas:
@@ -493,9 +513,9 @@ with tab_dash:
                 <div style="margin-bottom:10px;">
                   <div style="display:flex;justify-content:space-between;">
                     <span style="font-size:13px;color:#1A1A2E;">{m['nome']}</span>
-                    <span style="font-size:12px;color:#888899;">{p_m:.0f}% · {rest} meses</span>
+                    <span style="font-size:12px;color:#4B5563;">{p_m:.0f}% · {rest} meses</span>
                   </div>{barra(p_m, "#7C6FFF")}
-                  <span style="font-size:11px;color:#888899;">{fmt(m.get('atual',0))} / {fmt(m['valor'])} · {fmt(m['mensal'])}/mês</span>
+                  <span style="font-size:11px;color:#4B5563;">{fmt(m.get('atual',0))} / {fmt(m['valor'])} · {fmt(m['mensal'])}/mês</span>
                 </div>""", unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
 
@@ -504,8 +524,8 @@ with tab_dash:
             st.markdown(f"""<div class="card-red">
             <b style='color:#1A1A2E;'>💳 Dívidas em Aberto</b><br>
             <span style='font-size:22px;font-weight:700;color:#991B1B;'>{fmt(total_div_d)}</span>
-            <span style='font-size:12px;color:#888899;'> saldo total · {fmt(div_m)}/mês</span><br>
-            <span style='font-size:12px;color:#888899;'>{len(st.session_state.dividas)} dívida(s) ativa(s)</span>
+            <span style='font-size:12px;color:#4B5563;'> saldo total · {fmt(div_m)}/mês</span><br>
+            <span style='font-size:12px;color:#4B5563;'>{len(st.session_state.dividas)} dívida(s) ativa(s)</span>
             </div>""", unsafe_allow_html=True)
 
         st.markdown('<div class="card-purple">', unsafe_allow_html=True)
@@ -561,15 +581,15 @@ with tab_ia:
         st.markdown(f"""
         <div style="display:flex;gap:10px;margin:10px 0;">
           <div style="flex:1;background:#F0F0FA;border-radius:9px;padding:12px;text-align:center;">
-            <div style="font-size:11px;color:#888899;">Montante Final</div>
+            <div style="font-size:11px;color:#4B5563;">Montante Final</div>
             <div style="font-size:17px;font-weight:700;color:#065F46;">{fmt(montante)}</div>
           </div>
           <div style="flex:1;background:#F0F0FA;border-radius:9px;padding:12px;text-align:center;">
-            <div style="font-size:11px;color:#888899;">Lucro</div>
+            <div style="font-size:11px;color:#4B5563;">Lucro</div>
             <div style="font-size:17px;font-weight:700;color:#6D28D9;">{fmt(lucro)}</div>
           </div>
         </div>
-        <span style="font-size:11px;color:#888899;">Taxa: {taxa_a}% a.a. | Total investido: {fmt(investido)}</span>
+        <span style="font-size:11px;color:#4B5563;">Taxa: {taxa_a}% a.a. | Total investido: {fmt(investido)}</span>
         """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -594,7 +614,7 @@ with tab_ia:
             st.markdown('<div class="alert-info" style="text-align:center;">💰 Faça sua primeira pergunta. O Oráculo conhece seus números e vai ser direto ao ponto.</div>', unsafe_allow_html=True)
         for msg in st.session_state.historico_chat:
             if msg["role"] == "user":
-                st.markdown(f'<div class="chat-user"><span style="font-size:11px;color:#888899;">👤 {st.session_state.nome_user}</span><br><span style="color:#1A1A2E;">{msg["content"]}</span></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="chat-user"><span style="font-size:11px;color:#4B5563;">👤 {st.session_state.nome_user}</span><br><span style="color:#1A1A2E;">{msg["content"]}</span></div>', unsafe_allow_html=True)
             else:
                 st.markdown(f'<div class="chat-ai"><span style="font-size:11px;color:#5B50E8;">💰 Oráculo</span><br><span style="color:#333355;">{msg["content"]}</span></div>', unsafe_allow_html=True)
 
@@ -694,10 +714,10 @@ with tab_gastos:
             gastos_f = [g for g in st.session_state.gastos if g["tipo"] in filtro]
             for i, g in enumerate(gastos_f):
                 parc_t = f" ({g['parcelas']}x)" if g.get("parcelado") else ""
-                desc_t = f'<br><span style="font-size:11px;color:#888899;">{g["descricao"]}</span>' if g.get("descricao") else ""
+                desc_t = f'<br><span style="font-size:11px;color:#4B5563;">{g["descricao"]}</span>' if g.get("descricao") else ""
                 col_gi, col_gd = st.columns([5, 1])
                 with col_gi:
-                    st.markdown(f'<div class="list-item"><div><span style="color:#1A1A2E;">{g["tipo"]}{parc_t}</span>{desc_t}<br><span style="font-size:11px;color:#888899;">{g.get("data","")}</span></div><span style="color:#92400E;font-weight:600;">{fmt(g["valor"])}</span></div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="list-item"><div><span style="color:#1A1A2E;">{g["tipo"]}{parc_t}</span>{desc_t}<br><span style="font-size:11px;color:#4B5563;">{g.get("data","")}</span></div><span style="color:#92400E;font-weight:600;">{fmt(g["valor"])}</span></div>', unsafe_allow_html=True)
                 with col_gd:
                     idx = st.session_state.gastos.index(g)
                     if st.button("✕", key=f"del_g_{i}"):
@@ -801,7 +821,7 @@ with tab_fixas:
                 col_fi, col_ft, col_fd = st.columns([4, 1, 1])
                 with col_fi:
                     op = "1" if ativa else "0.4"
-                    st.markdown(f'<div class="list-item" style="opacity:{op};"><div><span style="color:#1A1A2E;">{f["nome"]}</span><br><span style="font-size:11px;color:#888899;">Dia {f.get("dia_venc","?")} · {f.get("categoria","")}</span></div><span style="color:#0369A1;font-weight:600;">{fmt(f["valor"])}</span></div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="list-item" style="opacity:{op};"><div><span style="color:#1A1A2E;">{f["nome"]}</span><br><span style="font-size:11px;color:#4B5563;">Dia {f.get("dia_venc","?")} · {f.get("categoria","")}</span></div><span style="color:#0369A1;font-weight:600;">{fmt(f["valor"])}</span></div>', unsafe_allow_html=True)
                 with col_ft:
                     if st.button("⏸" if ativa else "▶", key=f"tog_f_{i}"):
                         st.session_state.contas_fixas[idx]["ativa"] = not ativa; st.rerun()
@@ -865,7 +885,7 @@ with tab_div:
                       <span class="badge-red">{d['juros_mensal']}%/mês</span>
                     </div>
                     <span style="font-size:12px;color:#555577;">Saldo: {fmt(saldo_d)} · Parcela: {fmt(d['parcela_mensal'])}/mês</span>
-                    {barra(p_d, "#EF4444")}
+                    {barra(p_d, "#B91C1C")}
                     <span style="font-size:11px;color:#991B1B;">{p_d:.1f}% quitado</span>
                     </div>""", unsafe_allow_html=True)
                     novo_pago = st.number_input("Valor já pago:", min_value=0.0, max_value=float(d["valor_total"]), value=float(d["valor_pago"]), key=f"dp_{i}")
@@ -925,7 +945,7 @@ with tab_res:
             ("Poupança",          "Rende menos que a inflação",            "⚠️ Evite",   "#FCD34D"),
             ("Debaixo do colchão","Zero rendimento, risco físico",         "❌ Não",     "#FCA5A5"),
         ]:
-            st.markdown(f'<div class="list-item"><div><span style="color:#1A1A2E;">{nm_r}</span><br><span style="font-size:11px;color:#888899;">{desc_r}</span></div><span style="color:{cor_r};font-size:12px;">{st_r}</span></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="list-item"><div><span style="color:#1A1A2E;">{nm_r}</span><br><span style="font-size:11px;color:#4B5563;">{desc_r}</span></div><span style="color:{cor_r};font-size:12px;">{st_r}</span></div>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col_rv2:
@@ -933,20 +953,20 @@ with tab_res:
         st.markdown(f"""<div class="card">
         <div style="text-align:center;margin-bottom:16px;">
           <div style="font-size:34px;font-weight:700;color:{cor_rv};">{fmt(st.session_state.reserva_emergencia)}</div>
-          <div style="font-size:13px;color:#888899;">de {fmt(meta_res)}</div>
+          <div style="font-size:13px;color:#4B5563;">de {fmt(meta_res)}</div>
         </div>
         {barra(pct_res, "#10B981")}
         <div style="display:flex;gap:10px;margin:16px 0;">
           <div style="flex:1;background:#F0F0FA;border-radius:9px;padding:10px;text-align:center;">
-            <div style="font-size:11px;color:#888899;">Meses cobertos</div>
+            <div style="font-size:11px;color:#4B5563;">Meses cobertos</div>
             <div style="font-size:20px;font-weight:700;color:#10B981;">{round(st.session_state.reserva_emergencia/gf, 1) if gf > 0 else "∞"}</div>
           </div>
           <div style="flex:1;background:#F0F0FA;border-radius:9px;padding:10px;text-align:center;">
-            <div style="font-size:11px;color:#888899;">Meta (meses)</div>
+            <div style="font-size:11px;color:#4B5563;">Meta (meses)</div>
             <div style="font-size:20px;font-weight:700;color:#1A1A2E;">{st.session_state.config_meta_reserva}</div>
           </div>
           <div style="flex:1;background:#F0F0FA;border-radius:9px;padding:10px;text-align:center;">
-            <div style="font-size:11px;color:#888899;">Concluído</div>
+            <div style="font-size:11px;color:#4B5563;">Concluído</div>
             <div style="font-size:20px;font-weight:700;color:#5B50E8;">{min(100, pct_res):.0f}%</div>
           </div>
         </div>
@@ -991,10 +1011,9 @@ with tab_inv:
             st.markdown(f"""<div class="card-gold" style="text-align:center;padding:12px;">
             <div style="font-size:13px;color:#92400E;font-weight:600;">{anos} ano{'s' if anos>1 else ''}</div>
             <div style="font-size:15px;font-weight:700;color:#1A1A2E;margin:4px 0;">{fmt(mont)}</div>
-            <div style="font-size:11px;color:#888899;">+{fmt(lucro_i)}</div>
+            <div style="font-size:11px;color:#4B5563;">+{fmt(lucro_i)}</div>
             </div>""", unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
     col_inv_a, col_inv_b = st.columns(2)
 
     with col_inv_a:
@@ -1035,7 +1054,7 @@ with tab_inv:
             ]
         }
         for nm_i, desc_i, st_i in inv_map[perfil_inv]:
-            st.markdown(f'<div class="list-item"><div><b style="color:#1A1A2E;">{nm_i}</b><br><span style="font-size:11px;color:#888899;">{desc_i}</span></div><span style="color:#065F46;">{st_i}</span></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="list-item"><div><b style="color:#1A1A2E;">{nm_i}</b><br><span style="font-size:11px;color:#4B5563;">{desc_i}</span></div><span style="color:#065F46;">{st_i}</span></div>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════
@@ -1069,15 +1088,15 @@ with tab_pat:
         <b style='color:#1A1A2E;'>⚖️ Balanço Patrimonial</b>
         <div style="display:flex;gap:10px;margin:14px 0;">
           <div style="flex:1;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:9px;padding:12px;text-align:center;">
-            <div style="font-size:11px;color:#888899;">Ativos</div>
+            <div style="font-size:11px;color:#4B5563;">Ativos</div>
             <div style="font-size:18px;font-weight:700;color:#065F46;">{fmt(total_a)}</div>
           </div>
           <div style="flex:1;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:9px;padding:12px;text-align:center;">
-            <div style="font-size:11px;color:#888899;">Passivos</div>
+            <div style="font-size:11px;color:#4B5563;">Passivos</div>
             <div style="font-size:18px;font-weight:700;color:#991B1B;">{fmt(total_p)}</div>
           </div>
           <div style="flex:1;background:#F0F0FA;border-radius:9px;padding:12px;text-align:center;">
-            <div style="font-size:11px;color:#888899;">Patrimônio Líquido</div>
+            <div style="font-size:11px;color:#4B5563;">Patrimônio Líquido</div>
             <div style="font-size:18px;font-weight:700;color:{cor_pl};">{fmt(pat_liq)}</div>
           </div>
         </div>""", unsafe_allow_html=True)
@@ -1088,7 +1107,7 @@ with tab_pat:
                     idx = st.session_state.patrimonio_itens.index(item)
                     col_pi, col_pd = st.columns([5, 1])
                     with col_pi:
-                        st.markdown(f'<div class="list-item"><span style="color:#1A1A2E;">{item["nome"]} <span style="color:#888899;font-size:11px;">({item["categoria"]})</span></span><span style="color:{cor_p};font-weight:600;">{fmt(item["valor"])}</span></div>', unsafe_allow_html=True)
+                        st.markdown(f'<div class="list-item"><span style="color:#1A1A2E;">{item["nome"]} <span style="color:#4B5563;font-size:11px;">({item["categoria"]})</span></span><span style="color:{cor_p};font-weight:600;">{fmt(item["valor"])}</span></div>', unsafe_allow_html=True)
                     with col_pd:
                         if st.button("✕", key=f"del_pat_{rotulo_p}_{i}"):
                             st.session_state.patrimonio_itens.pop(idx); st.rerun()
@@ -1111,7 +1130,7 @@ with tab_rel:
             ("🛡️ Despesas Fixas",         fmt(gf),                                     "#7DD3FC"),
             ("💸 Gastos Variáveis",       fmt(gv),                                     "#FCD34D"),
             ("💳 Parcelas de Dívidas",    fmt(div_m),                                  "#FCA5A5"),
-            ("🚀 Alocação em Metas",      fmt(gm),                                     "#A78BFA"),
+            ("🚀 Alocação em Metas",      fmt(gm),                                     "#6D28D9"),
             ("⚖️ Saldo Livre",            fmt(saldo),                                  "#6EE7B7" if saldo>=0 else "#FCA5A5"),
             ("🛡️ Reserva de Emergência",  fmt(st.session_state.reserva_emergencia),    "#6EE7B7"),
             ("💳 Total de Dívidas",       fmt(total_div_r),                            "#FCA5A5"),
@@ -1130,14 +1149,14 @@ with tab_rel:
                 ("🛡️ Fixas",          gf,              "#38BDF8"),
                 ("💸 Variáveis",      gv,              "#FCD34D"),
                 ("💳 Dívidas",        div_m,           "#FCA5A5"),
-                ("🚀 Metas",          gm,              "#A78BFA"),
+                ("🚀 Metas",          gm,              "#6D28D9"),
                 ("✅ Saldo Livre",    max(0, saldo),   "#6EE7B7"),
             ]:
                 pct_f = pct(val_f, renda)
                 st.markdown(f"""
                 <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
                   <span style="font-size:13px;color:#555577;">{nome_f}</span>
-                  <span style="font-size:13px;color:#1A1A2E;">{fmt(val_f)} <span style="color:#888899;">({pct_f}%)</span></span>
+                  <span style="font-size:13px;color:#1A1A2E;">{fmt(val_f)} <span style="color:#4B5563;">({pct_f}%)</span></span>
                 </div>{barra(pct_f, cor_f)}""", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -1197,7 +1216,7 @@ with tab_cfg:
         <p style="font-size:13px;line-height:1.7;">
         O <b style="color:#1A1A2E;">Oráculo Financeiro</b> é um sistema pessoal de organização e educação financeira.
         </p>
-        <p style="font-size:12px;color:#888899;">⚠️ Este sistema não é um serviço regulamentado. As análises são educativas e não substituem um consultor financeiro certificado (CFP/CEA).</p>
+        <p style="font-size:12px;color:#4B5563;">⚠️ Este sistema não é um serviço regulamentado. As análises são educativas e não substituem um consultor financeiro certificado (CFP/CEA).</p>
         """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
